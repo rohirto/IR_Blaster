@@ -5,12 +5,8 @@
 #include <IRutils.h>
 
 #include "logger.h"
+#include "config/pins.h"
 
-// =====================================
-// IR Receiver Pin
-// =====================================
-
-static const uint16_t IR_RECEIVE_PIN = 12;
 
 // =====================================
 // IR Receiver Instance

@@ -4,6 +4,7 @@
 #include <ESPAsyncWebServer.h>
 
 #include "logger.h"
+#include "config/system_config.h"
 
 #include "api/system_routes.h"
 #include "api/ir_routes.h"
@@ -12,7 +13,7 @@
 #include "api/config_routes.h"
 #include "api/action_routes.h"
 
-AsyncWebServer server(80);
+AsyncWebServer server(API_PORT);
 
 void ApiServer::begin() {
 

@@ -5,6 +5,8 @@
 #include <WiFiManager.h>
 
 #include "logger.h"
+#include "config/system_config.h"
+#include "config/constants.h"
 
 String NetworkManager::hostname = "";
 
@@ -28,6 +30,11 @@ void NetworkManager::begin() {
         "NET",
         "Starting WiFiManager..."
     );
+
+    wm.setConnectTimeout(
+        WIFI_CONNECT_TIMEOUT
+        );
+
 
     bool result = wm.autoConnect(hostname.c_str());
 
@@ -77,7 +84,7 @@ void NetworkManager::setupMDNS() {
         return;
     }
 
-    MDNS.addService("http", "tcp", 80);
+    MDNS.addService("http", "tcp", API_PORT);
 
     Logger::info(
         "MDNS",
@@ -97,7 +104,7 @@ String NetworkManager::generateHostname() {
     snprintf(
         hostnameBuffer,
         sizeof(hostnameBuffer),
-        "irblaster_%02X%02X%02X",
+        MDNS_PREFIX "%02X%02X%02X",
         mac[3],
         mac[4],
         mac[5]

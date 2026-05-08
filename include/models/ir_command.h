@@ -13,12 +13,22 @@ public:
 
     uint16_t bits;
 
-    IRCommand();
+    bool isValid;
+
+    IRCommand()
+        : bits(0),
+          isValid(false) {
+    }
 
     IRCommand(
-        String action,
-        String protocol,
-        String data,
+        const String& action,
+        const String& protocol,
+        const String& data,
         uint16_t bits
-    );
+    ) : action(action),
+        protocol(protocol),
+        data(data),
+        bits(bits),
+        isValid(true) {
+    }
 };

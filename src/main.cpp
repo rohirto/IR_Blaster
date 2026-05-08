@@ -11,6 +11,7 @@
 #include "services/ir_receive_service.h"
 #include "services/learn_service.h"
 #include "services/ir_send_service.h"
+#include "config/system_config.h"
 #include "led_driver.h"
 
 void setup() {

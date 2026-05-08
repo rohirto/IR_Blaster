@@ -1,8 +1,9 @@
 #include "logger.h"
+#include "config/pins.h"
 
 LogLevel Logger::currentLevel = LOG_DEBUG;
 
-LedDriver statusLed(LED_BUILTIN, true);
+LedDriver statusLed(STATUS_LED_PIN, true);
 
 void Logger::begin(unsigned long baud) {
 

@@ -3,6 +3,8 @@
 #include <ArduinoJson.h>
 
 #include "logger.h"
+#include "config/constants.h"
+#include "config/system_config.h"
 #include "services/storage_service.h"
 
 std::vector<Device> DeviceService::devices;
@@ -25,7 +27,17 @@ std::vector<Device> DeviceService::getDevices() {
 
 bool DeviceService::addDevice(
     const Device& device
-) {
+)
+{
+    if (devices.size() >= MAX_DEVICES)
+    {
+
+        Logger::warn(
+            "DEVICE",
+            "Maximum device limit reached");
+
+        return false;
+    }
 
     devices.push_back(device);
 
@@ -38,7 +50,7 @@ void DeviceService::loadDevices() {
 
     devices.clear();
 
-    if (!StorageService::exists("/devices.json")) {
+    if (!StorageService::exists(DEVICES_FILE)) {
 
         Logger::warn(
             "DEVICE",
@@ -49,12 +61,39 @@ void DeviceService::loadDevices() {
     }
 
     String json = StorageService::readFile(
-        "/devices.json"
+        DEVICES_FILE
     );
+    // =================================
+    // Validate Size
+    // =================================
+
+    if (
+        json.length() >
+        MAX_JSON_DOC_SIZE)
+    {
+
+        Logger::error(
+            "DEVICE",
+            "Device file exceeds max size");
+
+        return;
+    }
 
     JsonDocument doc;
 
-    deserializeJson(doc, json);
+    Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
+    DeserializationError error =
+                deserializeJson(doc, json);
+
+    Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
+
 
     JsonArray array = doc.as<JsonArray>();
 
@@ -92,7 +131,7 @@ void DeviceService::saveDevices() {
     serializeJsonPretty(doc, output);
 
     StorageService::writeFile(
-        "/devices.json",
+        DEVICES_FILE,
         output
     );
 }

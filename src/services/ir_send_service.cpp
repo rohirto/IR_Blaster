@@ -88,7 +88,6 @@ bool IRSendService::sendCommand(
     // =================================
 
     if (command.protocol == "SAMSUNG") {
-
         irsend.sendSAMSUNG(
             value,
             command.bits

@@ -6,6 +6,10 @@
 #include "services/command_service.h"
 
 #include "models/ir_command.h"
+#include "config/system_config.h"
+#include "config/api_paths.h"
+
+#include "logger.h"
 
 void registerActionRoutes(
     AsyncWebServer& server
@@ -16,26 +20,43 @@ void registerActionRoutes(
     // =====================================
 
     server.on(
-        "/api/actions/execute",
+        API_ACTION_EXECUTE,
         HTTP_POST,
-        [](AsyncWebServerRequest *request) {
-        },
+        [](AsyncWebServerRequest *request) {},
         NULL,
         [](AsyncWebServerRequest *request,
            uint8_t *data,
            size_t len,
            size_t index,
-           size_t total) {
-
+           size_t total)
+        {
             JsonDocument doc;
 
-            DeserializationError error =
-                deserializeJson(
-                    doc,
-                    data
-                );
+            if (len > MAX_JSON_DOC_SIZE)
+            {
+                    request->send(
+                    413,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Payload too large\"}");
 
-            if (error) {
+                return;
+            }
+
+            Logger::debug(
+                "MEMORY",
+                "Heap before deserialize: %u",
+                ESP.getFreeHeap());
+
+            DeserializationError error =
+                deserializeJson(doc, data);
+
+            Logger::debug(
+                "MEMORY",
+                "Heap after deserialize: %u",
+                ESP.getFreeHeap());
+
+            if (error)
+            {
 
                 request->send(
                     400,
@@ -55,7 +76,8 @@ void registerActionRoutes(
             if (
                 deviceId.isEmpty() ||
                 action.isEmpty()
-            ) {
+            )
+            {
 
                 request->send(
                     400,
@@ -72,7 +94,8 @@ void registerActionRoutes(
                     action
                 );
 
-            if (!result) {
+            if (!result)
+            {
 
                 request->send(
                     404,
@@ -88,14 +111,13 @@ void registerActionRoutes(
                 "application/json",
                 "{\"success\":true}"
             );
-        }
-    );
-        // =====================================
+        });
+    // =====================================
     // GET /api/actions/list
     // =====================================
 
     server.on(
-        "/api/actions/list",
+        API_ACTION_LIST,
         HTTP_GET,
         [](AsyncWebServerRequest *request) {
 

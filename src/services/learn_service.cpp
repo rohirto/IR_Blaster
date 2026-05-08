@@ -1,6 +1,7 @@
 #include "services/learn_service.h"
 
 #include "logger.h"
+#include "config/system_config.h"
 
 #include "services/mode_service.h"
 #include "services/ir_receive_service.h"
@@ -18,8 +19,6 @@ String LearnService::currentAction =
 unsigned long LearnService::learnStartTime =
     0;
 
-const unsigned long LearnService::LEARN_TIMEOUT_MS =
-    15000;
 
 // =====================================
 // Begin

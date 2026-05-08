@@ -5,6 +5,7 @@
 
 #include "logger.h"
 #include "network_manager.h"
+#include "config/api_paths.h"
 
 void registerSystemRoutes(AsyncWebServer& server) {
 
@@ -12,7 +13,7 @@ void registerSystemRoutes(AsyncWebServer& server) {
     // Root
     // =========================
 
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    server.on(API_ROOT, HTTP_GET, [](AsyncWebServerRequest *request) {
 
         request->send(
             200,
@@ -25,7 +26,7 @@ void registerSystemRoutes(AsyncWebServer& server) {
     // Ping
     // =========================
 
-    server.on("/api/ping", HTTP_GET, [](AsyncWebServerRequest *request) {
+    server.on(API_SYSTEM_PING, HTTP_GET, [](AsyncWebServerRequest *request) {
 
         request->send(
             200,
@@ -38,13 +39,14 @@ void registerSystemRoutes(AsyncWebServer& server) {
     // System Info
     // =========================
 
-    server.on("/api/system", HTTP_GET, [](AsyncWebServerRequest *request) {
+    server.on(API_SYSTEM_INFO, HTTP_GET, [](AsyncWebServerRequest *request) {
 
-        DynamicJsonDocument doc(512);
+        JsonDocument doc;
 
         doc["success"] = true;
 
-        JsonObject data = doc.createNestedObject("data");
+        JsonObject data =
+                    doc["data"].to<JsonObject>();
 
         data["hostname"] = NetworkManager::getHostname();
 
@@ -73,7 +75,7 @@ void registerSystemRoutes(AsyncWebServer& server) {
     // Restart
     // =========================
 
-    server.on("/api/restart", HTTP_POST, [](AsyncWebServerRequest *request) {
+    server.on(API_SYSTEM_RESTART, HTTP_POST, [](AsyncWebServerRequest *request) {
 
         Logger::warn(
             "SYSTEM",

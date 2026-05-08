@@ -7,6 +7,8 @@
 #include "models/device.h"
 
 #include "services/device_service.h"
+#include "config/system_config.h"
+#include "config/api_paths.h"
 
 void registerDeviceRoutes(
     AsyncWebServer& server
@@ -17,7 +19,7 @@ void registerDeviceRoutes(
     // =====================================
 
     server.on(
-        "/api/devices",
+        API_DEVICES,
         HTTP_GET,
         [](AsyncWebServerRequest *request) {
 
@@ -63,7 +65,7 @@ void registerDeviceRoutes(
     // =====================================
 
     server.on(
-        "/api/devices",
+        API_DEVICES,
         HTTP_POST,
         [](AsyncWebServerRequest *request) {
         },
@@ -76,11 +78,27 @@ void registerDeviceRoutes(
 
             JsonDocument doc;
 
+            if (len > MAX_JSON_DOC_SIZE)
+            {
+                    request->send(
+                    413,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Payload too large\"}");
+
+                return;
+            }
+            Logger::debug(
+                "MEMORY",
+                "Heap before deserialize: %u",
+                ESP.getFreeHeap());
+
             DeserializationError error =
-                deserializeJson(
-                    doc,
-                    data
-                );
+                deserializeJson(doc, data);
+
+            Logger::debug(
+                "MEMORY",
+                "Heap after deserialize: %u",
+                ESP.getFreeHeap());
 
             if (error) {
 
@@ -158,7 +176,7 @@ void registerDeviceRoutes(
     // =====================================
 
     server.on(
-        "/api/devices",
+        API_DEVICES,
         HTTP_DELETE,
         [](AsyncWebServerRequest *request) {
 

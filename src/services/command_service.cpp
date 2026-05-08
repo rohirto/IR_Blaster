@@ -3,13 +3,15 @@
 #include <ArduinoJson.h>
 
 #include "logger.h"
+#include "config/constants.h"
+#include "config/system_config.h"
 #include "services/storage_service.h"
 
 String CommandService::getCommandFilePath(
     const String& deviceId
 ) {
 
-    return "/cmd_" + deviceId + ".json";
+    return COMMAND_FILE_PREFIX + deviceId + ".json";
 }
 
 bool CommandService::saveCommand(
@@ -28,7 +30,34 @@ bool CommandService::saveCommand(
         String existingJson =
             StorageService::readFile(path);
 
-        deserializeJson(doc, existingJson);
+        // =================================
+        // Validate Size
+        // =================================
+
+        if (
+            existingJson.length() >
+            MAX_JSON_DOC_SIZE)
+        {
+
+            Logger::error(
+                "COMMAND",
+                "Command file exceeds max size");
+
+            return false;
+        }
+
+        Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
+        DeserializationError error =
+                deserializeJson(doc, existingJson);
+
+        Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
     }
 
     JsonObject root;
@@ -42,6 +71,18 @@ bool CommandService::saveCommand(
     {
 
         root = doc.to<JsonObject>();
+    }
+
+    if (
+        !root[command.action].is<JsonObject>() &&
+        root.size() >= MAX_ACTIONS_PER_DEVICE)
+    {
+
+        Logger::warn(
+            "COMMAND",
+            "Maximum actions limit reached");
+
+        return false;
     }
 
     JsonObject cmd =
@@ -62,6 +103,12 @@ bool CommandService::saveCommand(
     serializeJsonPretty(
         doc,
         output
+    );
+
+    Logger::debug(
+        "COMMAND",
+        "Free heap: %u",
+        ESP.getFreeHeap()
     );
 
     Logger::debug(
@@ -104,10 +151,36 @@ bool CommandService::hasCommand(
 
     String json =
         StorageService::readFile(path);
+    // =================================
+    // Validate Size
+    // =================================
+
+    if (
+        json.length() >
+        MAX_JSON_DOC_SIZE)
+    {
+
+        Logger::error(
+            "COMMAND",
+            "Command file exceeds max size");
+
+        return false;
+    }
 
     JsonDocument doc;
 
-    deserializeJson(doc, json);
+    Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
+    DeserializationError error =
+                deserializeJson(doc, json);
+
+    Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
 
     return doc[action].is<JsonObject>();
 }
@@ -127,10 +200,32 @@ IRCommand CommandService::getCommand(
 
     String json =
         StorageService::readFile(path);
+    if (
+        json.length() >
+        MAX_JSON_DOC_SIZE)
+    {
+
+        Logger::error(
+            "COMMAND",
+            "Command file exceeds max size");
+
+        return IRCommand();
+    }
 
     JsonDocument doc;
 
-    deserializeJson(doc, json);
+    Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
+    DeserializationError error =
+                deserializeJson(doc, json);
+
+    Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
 
     if (!doc[action].is<JsonObject>()) {
 
@@ -164,10 +259,33 @@ std::vector<IRCommand> CommandService::getCommands(
 
     String json =
         StorageService::readFile(path);
+    if (
+        json.length() >
+        MAX_JSON_DOC_SIZE
+    ) {
+
+        Logger::error(
+            "COMMAND",
+            "Command file exceeds max size"
+        );
+
+        return commands;
+    }
 
     JsonDocument doc;
 
-    deserializeJson(doc, json);
+    Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
+    DeserializationError error =
+                deserializeJson(doc, json);
+
+    Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
 
     JsonObject root =
         doc.as<JsonObject>();
@@ -240,11 +358,36 @@ bool CommandService::deleteCommand(
 
     String json =
         StorageService::readFile(path);
+    // =================================
+    // Validate Size
+    // =================================
+
+    if (
+        json.length() >
+        MAX_JSON_DOC_SIZE)
+    {
+
+        Logger::error(
+            "COMMAND",
+            "Command file exceeds max size");
+
+        return false;
+    }
 
     JsonDocument doc;
 
+    Logger::debug(
+            "MEMORY",
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+        
     DeserializationError error =
-        deserializeJson(doc, json);
+                deserializeJson(doc, json);
+
+    Logger::debug(
+            "MEMORY",
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
 
     if (error) {
 
@@ -259,7 +402,7 @@ bool CommandService::deleteCommand(
     JsonObject root =
         doc.as<JsonObject>();
 
-    if (!root.containsKey(action)) {
+    if (!root[action].is<JsonObject>()) {
 
         Logger::warn(
             "COMMAND",

@@ -4,6 +4,10 @@
 
 #include "services/mode_service.h"
 #include "services/learn_service.h"
+#include "config/system_config.h"
+#include "config/api_paths.h"
+
+#include "logger.h"
 
 void registerConfigRoutes(
     AsyncWebServer& server
@@ -14,7 +18,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/status",
+        API_CONFIG_STATUS,
         HTTP_GET,
         [](AsyncWebServerRequest *request) {
 
@@ -48,7 +52,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/start",
+        API_CONFIG_START,
         HTTP_POST,
         [](AsyncWebServerRequest *request) {
 
@@ -69,7 +73,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/end",
+        API_CONFIG_END,
         HTTP_POST,
         [](AsyncWebServerRequest *request) {
 
@@ -92,7 +96,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/learn",
+        API_CONFIG_LEARN,
         HTTP_POST,
         [](AsyncWebServerRequest *request) {
         },
@@ -105,11 +109,27 @@ void registerConfigRoutes(
 
             JsonDocument doc;
 
+            if (len > MAX_JSON_DOC_SIZE)
+            {
+                    request->send(
+                    413,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Payload too large\"}");
+
+                return;
+            }
+            Logger::debug(
+                "MEMORY",
+                "Heap before deserialize: %u",
+                ESP.getFreeHeap());
+
             DeserializationError error =
-                deserializeJson(
-                    doc,
-                    data
-                );
+                deserializeJson(doc, data);
+
+            Logger::debug(
+                "MEMORY",
+                "Heap after deserialize: %u",
+                ESP.getFreeHeap());
 
             if (error) {
 
@@ -172,7 +192,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/learn/status",
+        API_CONFIG_LEARN_STATUS,
         HTTP_GET,
         [](AsyncWebServerRequest *request) {
 
@@ -209,7 +229,7 @@ void registerConfigRoutes(
     // =====================================
 
     server.on(
-        "/api/config/learn/cancel",
+        API_CONFIG_LEARN_CANCEL,
         HTTP_POST,
         [](AsyncWebServerRequest *request) {
 

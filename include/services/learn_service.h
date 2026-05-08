@@ -44,6 +44,4 @@ private:
     static String currentAction;
 
     static unsigned long learnStartTime;
-
-    static const unsigned long LEARN_TIMEOUT_MS;
 };

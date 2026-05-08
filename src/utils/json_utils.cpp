@@ -78,3 +78,44 @@ String JsonUtils::serialize(
 
     return json;
 }
+
+bool JsonUtils::deserializeWithLengthValidation(
+    JsonDocument &doc,
+    const uint8_t *data,
+    size_t len,
+    const char *tag)
+{
+
+    if (len > MAX_JSON_DOC_SIZE)
+    {
+
+        Logger::error(
+            tag,
+            "JSON payload exceeds max size");
+
+        return false;
+    }
+    Logger::debug(
+            TAG_MEMORY,
+            "Heap before deserialize: %u",
+            ESP.getFreeHeap());
+    DeserializationError error =
+        deserializeJson(doc, data, len);
+    Logger::debug(
+            TAG_MEMORY,
+            "Heap after deserialize: %u",
+            ESP.getFreeHeap());
+
+    if (error)
+    {
+
+        Logger::error(
+            tag,
+            "JSON parse failed: %s",
+            error.c_str());
+
+        return false;
+    }
+
+    return true;
+}   

@@ -4,6 +4,7 @@
 
 #include "utils/logger.h"
 #include "utils/json_utils.h"
+#include "utils/validation_utils.h"
 
 #include "models/device.h"
 
@@ -88,20 +89,12 @@ void registerDeviceRoutes(
 
                 return;
             }
-            Logger::debug(
-                TAG_MEMORY,
-                "Heap before deserialize: %u",
-                ESP.getFreeHeap());
-
-            DeserializationError error =
-                deserializeJson(doc, data);
-
-            Logger::debug(
-                TAG_MEMORY,
-                "Heap after deserialize: %u",
-                ESP.getFreeHeap());
-
-            if (error) {
+            if (!JsonUtils::deserializeWithLengthValidation(
+                    doc,
+                    data,
+                    len,
+                    TAG_API
+                )) {
 
                 request->send(
                     400,
@@ -121,16 +114,35 @@ void registerDeviceRoutes(
             int type =
                 doc["type"] | -1;
 
+            if (!ValidationUtils::isValidId(id))
+            {
+
+                request->send(
+                    400,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Invalid device id\"}");
+
+                return;
+            }
+
+            if (!ValidationUtils::isValidName(name))
+            {
+
+                request->send(
+                    400,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Invalid device name\"}");
+
+                return;
+            }
             if (
-                id.isEmpty() ||
-                name.isEmpty() ||
                 type < 0
             ) {
 
                 request->send(
                     400,
                     "application/json",
-                    "{\"success\":false,\"error\":\"Missing fields\"}"
+                    "{\"success\":false,\"error\":\"Invalid device type\"}"
                 );
 
                 return;

@@ -11,6 +11,7 @@
 
 #include "utils/logger.h"
 #include "utils/json_utils.h"
+#include "utils/validation_utils.h"
 
 void registerActionRoutes(
     AsyncWebServer& server
@@ -43,20 +44,12 @@ void registerActionRoutes(
                 return;
             }
 
-            Logger::debug(
-                TAG_MEMORY,
-                "Heap before deserialize: %u",
-                ESP.getFreeHeap());
-
-            DeserializationError error =
-                deserializeJson(doc, data);
-
-            Logger::debug(
-                TAG_MEMORY,
-                "Heap after deserialize: %u",
-                ESP.getFreeHeap());
-
-            if (error)
+            if (!JsonUtils::deserializeWithLengthValidation(
+                    doc,
+                    data,
+                    len,
+                    TAG_ACTION
+                ))
             {
 
                 request->send(
@@ -74,17 +67,24 @@ void registerActionRoutes(
             String action =
                 doc["action"] | "";
 
-            if (
-                deviceId.isEmpty() ||
-                action.isEmpty()
-            )
+            if (!ValidationUtils::isValidId(deviceId))
             {
 
                 request->send(
                     400,
                     "application/json",
-                    "{\"success\":false,\"error\":\"Missing fields\"}"
-                );
+                    "{\"success\":false,\"error\":\"Invalid device id\"}");
+
+                return;
+            }
+
+            if (!ValidationUtils::isValidAction(action))
+            {
+
+                request->send(
+                    400,
+                    "application/json",
+                    "{\"success\":false,\"error\":\"Invalid action\"}");
 
                 return;
             }

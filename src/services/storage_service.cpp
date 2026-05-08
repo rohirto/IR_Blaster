@@ -57,29 +57,59 @@ String StorageService::readFile(
 
 bool StorageService::writeFile(
     const String& path,
-    const String& content
+    const String& data
 ) {
 
-    File file = LittleFS.open(path, "w");
+    String tempPath =
+        path + ".tmp";
+
+    File file =
+        LittleFS.open(
+            tempPath,
+            "w"
+        );
 
     if (!file) {
 
         Logger::error(
-            TAG_FS,
-            "Failed writing file: %s",
-            path.c_str()
+            "FS",
+            "Failed to open temp file"
         );
 
         return false;
     }
 
-    file.print(content);
+    size_t written =
+        file.print(data);
 
     file.close();
 
+    if (written != data.length()) {
+
+        Logger::error(
+            "FS",
+            "Incomplete write"
+        );
+
+        LittleFS.remove(tempPath);
+
+        return false;
+    }
+
+    LittleFS.remove(path);
+
+    if (!LittleFS.rename(tempPath, path)) {
+
+        Logger::error(
+            "FS",
+            "Rename failed"
+        );
+
+        return false;
+    }
+
     return true;
 }
-
 bool StorageService::deleteFile(
     const String& path
 ) {

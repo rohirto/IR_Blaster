@@ -25,6 +25,13 @@ public:
         const char* tag
     );
 
+    static bool deserializeWithLengthValidation(
+        JsonDocument& doc,
+        const uint8_t* data,
+        size_t len,
+        const char* tag
+    );
+
     static String serialize(
         const JsonDocument& doc,
         const char* tag

@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 
 #include "utils/logger.h"
+#include "utils/json_utils.h"
 #include "config/constants.h"
 #include "config/system_config.h"
 #include "services/storage_service.h"
@@ -64,35 +65,13 @@ void DeviceService::loadDevices() {
         DEVICES_FILE
     );
     // =================================
-    // Validate Size
+    // Validate Size and deserialize
     // =================================
 
-    if (
-        json.length() >
-        MAX_JSON_DOC_SIZE)
-    {
-
-        Logger::error(
-            TAG_DEVICE,
-            "Device file exceeds max size");
-
+    JsonDocument doc;
+    if (!JsonUtils::deserializeWithSizeValidation(doc, json, TAG_DEVICE)) {
         return;
     }
-
-    JsonDocument doc;
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-    DeserializationError error =
-                deserializeJson(doc, json);
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
 
 
     JsonArray array = doc.as<JsonArray>();

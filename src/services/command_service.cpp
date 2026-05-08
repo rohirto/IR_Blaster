@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 
 #include "utils/logger.h"
+#include "utils/json_utils.h"
 #include "config/constants.h"
 #include "config/system_config.h"
 #include "services/storage_service.h"
@@ -31,33 +32,13 @@ bool CommandService::saveCommand(
             StorageService::readFile(path);
 
         // =================================
-        // Validate Size
+        // Validate Size and deserialize
         // =================================
 
-        if (
-            existingJson.length() >
-            MAX_JSON_DOC_SIZE)
-        {
-
-            Logger::error(
-                TAG_COMMAND,
-                "Command file exceeds max size");
-
+        if (!JsonUtils::deserializeWithSizeValidation(doc, existingJson, TAG_COMMAND)) {
             return false;
         }
 
-        Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-        DeserializationError error =
-                deserializeJson(doc, existingJson);
-
-        Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
     }
 
     JsonObject root;
@@ -152,35 +133,13 @@ bool CommandService::hasCommand(
     String json =
         StorageService::readFile(path);
     // =================================
-    // Validate Size
+    // Validate Size and deserialize
     // =================================
 
-    if (
-        json.length() >
-        MAX_JSON_DOC_SIZE)
-    {
-
-        Logger::error(
-            TAG_COMMAND,
-            "Command file exceeds max size");
-
+    JsonDocument doc;
+    if (!JsonUtils::deserializeWithSizeValidation(doc, json, TAG_COMMAND)) {
         return false;
     }
-
-    JsonDocument doc;
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-    DeserializationError error =
-                deserializeJson(doc, json);
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
 
     return doc[action].is<JsonObject>();
 }
@@ -200,32 +159,12 @@ IRCommand CommandService::getCommand(
 
     String json =
         StorageService::readFile(path);
-    if (
-        json.length() >
-        MAX_JSON_DOC_SIZE)
-    {
-
-        Logger::error(
-            TAG_COMMAND,
-            "Command file exceeds max size");
-
+    
+    // Validate Size and deserialize
+    JsonDocument doc;
+    if (!JsonUtils::deserializeWithSizeValidation(doc, json, TAG_COMMAND)) {
         return IRCommand();
     }
-
-    JsonDocument doc;
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-    DeserializationError error =
-                deserializeJson(doc, json);
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
 
     if (!doc[action].is<JsonObject>()) {
 
@@ -259,34 +198,11 @@ std::vector<IRCommand> CommandService::getCommands(
 
     String json =
         StorageService::readFile(path);
-    if (
-        json.length() >
-        MAX_JSON_DOC_SIZE
-    ) {
-
-        Logger::error(
-            TAG_COMMAND,
-            "Command file exceeds max size"
-        );
-
+    // Validate Size and deserialize
+    JsonDocument doc;
+    if (!JsonUtils::deserializeWithSizeValidation(doc, json, TAG_COMMAND)) {
         return commands;
     }
-
-    JsonDocument doc;
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-    DeserializationError error =
-                deserializeJson(doc, json);
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
-
     JsonObject root =
         doc.as<JsonObject>();
 
@@ -359,43 +275,11 @@ bool CommandService::deleteCommand(
     String json =
         StorageService::readFile(path);
     // =================================
-    // Validate Size
+    // Validate Size and deserialize
     // =================================
 
-    if (
-        json.length() >
-        MAX_JSON_DOC_SIZE)
-    {
-
-        Logger::error(
-            TAG_COMMAND,
-            "Command file exceeds max size");
-
-        return false;
-    }
-
     JsonDocument doc;
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap before deserialize: %u",
-            ESP.getFreeHeap());
-        
-    DeserializationError error =
-                deserializeJson(doc, json);
-
-    Logger::debug(
-            TAG_MEMORY,
-            "Heap after deserialize: %u",
-            ESP.getFreeHeap());
-
-    if (error) {
-
-        Logger::error(
-            TAG_COMMAND,
-            "JSON parse failed"
-        );
-
+    if (!JsonUtils::deserializeWithSizeValidation(doc, json, TAG_COMMAND)) {
         return false;
     }
 

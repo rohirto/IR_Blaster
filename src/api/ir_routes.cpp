@@ -10,6 +10,7 @@
 #include "utils/logger.h"
 #include "config/system_config.h"
 #include "utils/ir_utils.h"
+#include "utils/json_utils.h"
 
 void registerIrRoutes(
     AsyncWebServer& server
@@ -154,7 +155,7 @@ void registerIrRoutes(
             // =============================
             // Payload Size Validation
             // =============================
-            if (len > MAX_JSON_DOC_SIZE)
+            if (len > JsonUtils::MAX_JSON_DOC_SIZE)
             {
 
                 Logger::warn(

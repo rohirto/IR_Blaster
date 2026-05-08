@@ -8,6 +8,7 @@
 #include "config/api_paths.h"
 
 #include "utils/logger.h"
+#include "utils/json_utils.h"
 
 void registerConfigRoutes(
     AsyncWebServer& server
@@ -109,7 +110,7 @@ void registerConfigRoutes(
 
             JsonDocument doc;
 
-            if (len > MAX_JSON_DOC_SIZE)
+            if (len > JsonUtils::MAX_JSON_DOC_SIZE)
             {
                     request->send(
                     413,

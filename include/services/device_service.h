@@ -19,6 +19,10 @@ public:
         const String& id
     );
 
+    static Device* getDeviceById(
+        const String& id
+    );
+
 private:
 
     static std::vector<Device> devices;

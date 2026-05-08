@@ -4,6 +4,8 @@
 
 #include "models/ir_command.h"
 
+#define MIN_UNKNOWN_SIZE 12
+
 class IRReceiveService {
 public:
 

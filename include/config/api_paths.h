@@ -47,3 +47,8 @@
 #define API_SYSTEM_INFO "/api/system"
 
 #define API_SYSTEM_RESTART "/api/restart"
+
+
+//AC APIS
+#define API_PATH_AC_STATE "/api/ac/state"
+#define API_PATH_AC_SET "/api/ac/set"

@@ -6,7 +6,8 @@ Device::Device() {
 Device::Device(
     String id,
     String name,
-    DeviceType type
+    DeviceType type,
+    ACBrand acBrand
 ) {
 
     this->id = id;
@@ -14,4 +15,6 @@ Device::Device(
     this->name = name;
 
     this->type = type;
+
+    this->acBrand = acBrand;
 }

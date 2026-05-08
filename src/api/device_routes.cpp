@@ -45,6 +45,8 @@ void registerDeviceRoutes(
                 obj["name"] = device.name;
 
                 obj["type"] = device.type;
+
+                obj["ac_brand"] = device.acBrand;
             }
 
             String response;
@@ -113,6 +115,9 @@ void registerDeviceRoutes(
 
             int type =
                 doc["type"] | -1;
+            
+            int acBrand =
+                doc["ac_brand"] | 0;
 
             if (!ValidationUtils::isValidId(id))
             {
@@ -151,7 +156,8 @@ void registerDeviceRoutes(
             Device device(
                 id,
                 name,
-                (DeviceType)type
+                (DeviceType)type,
+                (ACBrand)acBrand
             );
 
             bool result =

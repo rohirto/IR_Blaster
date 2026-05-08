@@ -78,10 +78,16 @@ void DeviceService::loadDevices() {
 
     for (JsonObject obj : array) {
 
+        ACBrand acBrand =
+        (ACBrand)(
+            obj["ac_brand"] | 0
+        );
+
         Device device(
             obj["id"].as<String>(),
             obj["name"].as<String>(),
-            (DeviceType)obj["type"].as<int>()
+            (DeviceType)obj["type"].as<int>(),
+            acBrand
         );
 
         devices.push_back(device);
@@ -103,6 +109,8 @@ void DeviceService::saveDevices() {
         obj["name"] = device.name;
 
         obj["type"] = device.type;
+
+        obj["ac_brand"] = device.acBrand;
     }
 
     String output;
@@ -149,4 +157,19 @@ bool DeviceService::deleteDevice(
     );
 
     return false;
+}
+
+Device* DeviceService::getDeviceById(
+    const String& id
+) {
+
+    for (Device& device : devices) {
+
+        if (device.id == id) {
+
+            return &device;
+        }
+    }
+
+    return nullptr;
 }

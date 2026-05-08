@@ -55,7 +55,7 @@ void IRReceiveService::loop() {
       return;
     }
     // Ignore noise
-    if (results.bits < 16) {
+    if (results.bits < MIN_UNKNOWN_SIZE) {
       irrecv.resume();
       return;
     }

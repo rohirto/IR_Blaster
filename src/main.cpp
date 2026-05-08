@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <TimeLib.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "network_manager.h"
 #include "api_server.h"
 #include "services/storage_service.h"
@@ -17,11 +17,11 @@
 void setup() {
   // put your setup code here, to run once:
   Logger::begin();
-  Logger::info("SYSTEM", "Firmware booting");
+  Logger::info(TAG_BOOT, "Firmware booting");
 
   // Device Service setup
   if (!StorageService::begin()) {
-    Logger::error("SYSTEM", "Failed to initialize storage");
+    Logger::error(TAG_SYSTEM, "Failed to initialize storage");
     ESP.restart();
   }
 
@@ -45,13 +45,13 @@ void setup() {
 
   // Time setup
   configTime(0, 0, "pool.ntp.org");
-  Logger::info("TIME", "Time synchronizing");
+  Logger::info(TAG_TIME, "Time synchronizing");
   while (time(nullptr) < 100000) {
     delay(500);
-    Logger::info("TIME", ".");
+    Logger::info(TAG_TIME, ".");
   }
   time_t now = time(nullptr);
-  Logger::info("TIME", "Time synchronized: %s", ctime(&now));
+  Logger::info(TAG_TIME, "Time synchronized: %s", ctime(&now));
 
   // Api Server setup
   ApiServer::begin();

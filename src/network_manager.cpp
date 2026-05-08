@@ -4,7 +4,7 @@
 #include <ESP8266mDNS.h>
 #include <WiFiManager.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/system_config.h"
 #include "config/constants.h"
 
@@ -15,7 +15,7 @@ void NetworkManager::begin() {
     hostname = generateHostname();
 
     Logger::info(
-        "NET",
+        TAG_NET,
         "Generated hostname: %s",
         hostname.c_str()
     );
@@ -27,7 +27,7 @@ void NetworkManager::begin() {
     wm.setHostname(hostname.c_str());
 
     Logger::info(
-        "NET",
+        TAG_NET,
         "Starting WiFiManager..."
     );
 
@@ -41,7 +41,7 @@ void NetworkManager::begin() {
     if (!result) {
 
         Logger::error(
-            "NET",
+            TAG_NET,
             "WiFi connection failed"
         );
 
@@ -49,13 +49,13 @@ void NetworkManager::begin() {
     }
 
     Logger::info(
-        "NET",
+        TAG_NET,
         "Connected to WiFi: %s",
         WiFi.SSID().c_str()
     );
 
     Logger::info(
-        "NET",
+        TAG_NET,
         "IP Address: %s",
         WiFi.localIP().toString().c_str()
     );
@@ -77,7 +77,7 @@ void NetworkManager::setupMDNS() {
     if (!MDNS.begin(hostname.c_str())) {
 
         Logger::error(
-            "MDNS",
+            TAG_MDNS          ,
             "Failed to start mDNS"
         );
 
@@ -87,7 +87,7 @@ void NetworkManager::setupMDNS() {
     MDNS.addService("http", "tcp", API_PORT);
 
     Logger::info(
-        "MDNS",
+        TAG_MDNS,
         "mDNS started: http://%s.local",
         hostname.c_str()
     );
@@ -116,7 +116,7 @@ String NetworkManager::generateHostname() {
 void NetworkManager::resetWiFi() {
 
     Logger::warn(
-        "NET",
+        TAG_NET,
         "Resetting WiFi settings"
     );
 

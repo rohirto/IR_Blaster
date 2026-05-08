@@ -3,7 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "network_manager.h"
 #include "config/api_paths.h"
 
@@ -78,7 +78,7 @@ void registerSystemRoutes(AsyncWebServer& server) {
     server.on(API_SYSTEM_RESTART, HTTP_POST, [](AsyncWebServerRequest *request) {
 
         Logger::warn(
-            "SYSTEM",
+            TAG_SYSTEM,
             "Restart requested"
         );
 

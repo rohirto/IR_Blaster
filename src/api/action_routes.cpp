@@ -9,7 +9,7 @@
 #include "config/system_config.h"
 #include "config/api_paths.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 
 void registerActionRoutes(
     AsyncWebServer& server
@@ -43,7 +43,7 @@ void registerActionRoutes(
             }
 
             Logger::debug(
-                "MEMORY",
+                TAG_MEMORY,
                 "Heap before deserialize: %u",
                 ESP.getFreeHeap());
 
@@ -51,7 +51,7 @@ void registerActionRoutes(
                 deserializeJson(doc, data);
 
             Logger::debug(
-                "MEMORY",
+                TAG_MEMORY,
                 "Heap after deserialize: %u",
                 ESP.getFreeHeap());
 

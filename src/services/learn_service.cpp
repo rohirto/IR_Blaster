@@ -1,6 +1,6 @@
 #include "services/learn_service.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/system_config.h"
 
 #include "services/mode_service.h"
@@ -27,7 +27,7 @@ unsigned long LearnService::learnStartTime =
 void LearnService::begin() {
 
     Logger::info(
-        "LEARN",
+        TAG_LEARN,
         "LearnService initialized"
     );
 }
@@ -53,7 +53,7 @@ void LearnService::loop() {
     ) {
 
         Logger::warn(
-            "LEARN",
+            TAG_LEARN,
             "Learning timeout"
         );
 
@@ -88,7 +88,7 @@ void LearnService::loop() {
     if (!result) {
 
         Logger::error(
-            "LEARN",
+            TAG_LEARN,
             "Failed to save learned command"
         );
 
@@ -98,7 +98,7 @@ void LearnService::loop() {
     }
 
     Logger::info(
-        "LEARN",
+        TAG_LEARN,
         "Learned action '%s' for device '%s'",
         currentAction.c_str(),
         currentDeviceId.c_str()
@@ -119,7 +119,7 @@ bool LearnService::startLearning(
     if (!ModeService::isConfigMode()) {
 
         Logger::warn(
-            "LEARN",
+            TAG_LEARN,
             "Cannot learn outside CONFIG_MODE"
         );
 
@@ -141,7 +141,7 @@ bool LearnService::startLearning(
     IRReceiveService::clearLastCommand();
 
     Logger::info(
-        "LEARN",
+        TAG_LEARN,
         "Started learning | Device=%s Action=%s",
         deviceId.c_str(),
         action.c_str()
@@ -166,7 +166,7 @@ void LearnService::cancelLearning() {
         "";
 
     Logger::info(
-        "LEARN",
+        TAG_LEARN,
         "Learning cancelled"
     );
 }

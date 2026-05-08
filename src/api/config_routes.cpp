@@ -7,7 +7,7 @@
 #include "config/system_config.h"
 #include "config/api_paths.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 
 void registerConfigRoutes(
     AsyncWebServer& server

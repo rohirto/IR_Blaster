@@ -1,6 +1,6 @@
 #include "services/action_service.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 
 #include "models/ir_command.h"
 
@@ -13,7 +13,7 @@ bool ActionService::executeAction(
 ) {
 
     Logger::info(
-        "ACTION",
+        TAG_ACTION,
         "Executing action '%s' for device '%s'",
         action.c_str(),
         deviceId.c_str()
@@ -31,7 +31,7 @@ bool ActionService::executeAction(
     ) {
 
         Logger::warn(
-            "ACTION",
+            TAG_ACTION,
             "Command not found"
         );
 
@@ -60,7 +60,7 @@ bool ActionService::executeAction(
     if (!result) {
 
         Logger::error(
-            "ACTION",
+            TAG_ACTION,
             "IR transmission failed"
         );
 
@@ -68,7 +68,7 @@ bool ActionService::executeAction(
     }
 
     Logger::info(
-        "ACTION",
+        TAG_ACTION,
         "Action executed successfully"
     );
 

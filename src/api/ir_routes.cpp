@@ -7,7 +7,7 @@
 #include "services/command_service.h"
 #include "config/api_paths.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/system_config.h"
 #include "utils/ir_utils.h"
 
@@ -158,7 +158,7 @@ void registerIrRoutes(
             {
 
                 Logger::warn(
-                    "COMMAND",
+                    TAG_COMMAND,
                     "Payload too large"
                 );
                 request->send(
@@ -179,7 +179,7 @@ void registerIrRoutes(
             {
 
                 Logger::error(
-                    "COMMAND",
+                    TAG_COMMAND,
                     "JSON parse failed: %s",
                     error.c_str()
                 );
@@ -270,7 +270,7 @@ void registerIrRoutes(
                 return;
             }
             Logger::info(
-                "COMMAND",
+                TAG_COMMAND,
                 "Manual IR command imported"
             );
 

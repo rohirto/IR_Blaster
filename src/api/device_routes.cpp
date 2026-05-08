@@ -2,7 +2,7 @@
 
 #include <ArduinoJson.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 
 #include "models/device.h"
 
@@ -88,7 +88,7 @@ void registerDeviceRoutes(
                 return;
             }
             Logger::debug(
-                "MEMORY",
+                TAG_MEMORY,
                 "Heap before deserialize: %u",
                 ESP.getFreeHeap());
 
@@ -96,7 +96,7 @@ void registerDeviceRoutes(
                 deserializeJson(doc, data);
 
             Logger::debug(
-                "MEMORY",
+                TAG_MEMORY,
                 "Heap after deserialize: %u",
                 ESP.getFreeHeap());
 
@@ -158,7 +158,7 @@ void registerDeviceRoutes(
             }
 
             Logger::info(
-                "DEVICE",
+                TAG_DEVICE,
                 "Device added: %s",
                 id.c_str()
             );
@@ -211,7 +211,7 @@ void registerDeviceRoutes(
             }
 
             Logger::info(
-                "DEVICE",
+                TAG_DEVICE,
                 "Device deleted: %s",
                 id.c_str()
             );

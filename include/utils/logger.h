@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "led_driver.h"
+#include "utils/log_tags.h"
 
 enum LogLevel {
     LOG_ERROR = 0,

@@ -3,7 +3,7 @@
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 
 // =====================================
 // IR LED Pin
@@ -26,7 +26,7 @@ void IRSendService::begin() {
     irsend.begin();
 
     Logger::info(
-        "IR_SEND",
+        TAG_IR_SEND,
         "IR sender initialized on pin %d",
         IR_SEND_PIN
     );
@@ -48,7 +48,7 @@ bool IRSendService::sendCommand(
         );
 
     Logger::info(
-        "IR_SEND",
+        TAG_IR_SEND,
         "Sending IR | Protocol=%s Data=%s Bits=%d",
         command.protocol.c_str(),
         command.data.c_str(),
@@ -101,7 +101,7 @@ bool IRSendService::sendCommand(
     // =================================
 
     Logger::warn(
-        "IR_SEND",
+        TAG_IR_SEND,
         "Unsupported protocol: %s",
         command.protocol.c_str()
     );

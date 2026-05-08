@@ -1,6 +1,6 @@
 #include "services/mode_service.h"
 
-#include "logger.h"
+#include "utils/logger.h"
 
 SystemMode ModeService::currentMode =
     NORMAL_MODE;
@@ -10,7 +10,7 @@ void ModeService::begin() {
     currentMode = NORMAL_MODE;
 
     Logger::info(
-        "MODE",
+        TAG_MODE,
         "Initialized in NORMAL_MODE"
     );
 }
@@ -22,7 +22,7 @@ void ModeService::setMode(
     currentMode = mode;
 
     Logger::info(
-        "MODE",
+        TAG_MODE,
         "Mode changed to: %s",
         getModeString()
     );

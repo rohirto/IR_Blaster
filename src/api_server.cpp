@@ -3,7 +3,7 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/system_config.h"
 
 #include "api/system_routes.h"
@@ -48,7 +48,7 @@ void ApiServer::begin() {
     server.begin();
 
     Logger::info(
-        "API",
+        TAG_API,
         "API server started"
     );
 }

@@ -2,7 +2,7 @@
 
 #include <ArduinoJson.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/constants.h"
 #include "config/system_config.h"
 #include "services/storage_service.h"
@@ -14,7 +14,7 @@ void DeviceService::begin() {
     loadDevices();
 
     Logger::info(
-        "DEVICE",
+        TAG_DEVICE,
         "Loaded %d devices",
         devices.size()
     );
@@ -33,7 +33,7 @@ bool DeviceService::addDevice(
     {
 
         Logger::warn(
-            "DEVICE",
+            TAG_DEVICE,
             "Maximum device limit reached");
 
         return false;
@@ -53,7 +53,7 @@ void DeviceService::loadDevices() {
     if (!StorageService::exists(DEVICES_FILE)) {
 
         Logger::warn(
-            "DEVICE",
+            TAG_DEVICE,
             "No devices.json found"
         );
 
@@ -73,7 +73,7 @@ void DeviceService::loadDevices() {
     {
 
         Logger::error(
-            "DEVICE",
+            TAG_DEVICE,
             "Device file exceeds max size");
 
         return;
@@ -82,7 +82,7 @@ void DeviceService::loadDevices() {
     JsonDocument doc;
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -90,7 +90,7 @@ void DeviceService::loadDevices() {
                 deserializeJson(doc, json);
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
 
@@ -145,7 +145,7 @@ bool DeviceService::deleteDevice(
         if (it->id == id) {
 
             Logger::info(
-                "DEVICE",
+                TAG_DEVICE,
                 "Deleting device: %s",
                 id.c_str()
             );
@@ -164,7 +164,7 @@ bool DeviceService::deleteDevice(
     }
 
     Logger::warn(
-        "DEVICE",
+        TAG_DEVICE,
         "Device not found: %s",
         id.c_str()
     );

@@ -4,7 +4,7 @@
 #include <IRrecv.h>
 #include <IRutils.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/pins.h"
 
 
@@ -34,7 +34,7 @@ void IRReceiveService::begin() {
     irrecv.enableIRIn();
 
     Logger::info(
-        "IR_RECV",
+        TAG_IR_RECV,
         "IR receiver initialized on pin 12"
     );
 }
@@ -63,7 +63,7 @@ void IRReceiveService::loop() {
     if (results.decode_type == UNKNOWN) {
 
         Logger::warn(
-            "IR_RECV",
+            TAG_IR_RECV,
             "Unknown IR protocol"
         );
 
@@ -93,7 +93,7 @@ void IRReceiveService::loop() {
     newCommandAvailable = true;
 
     Logger::info(
-        "IR_RECV",
+        TAG_IR_RECV,
         "IR received | Protocol=%s Data=%s Bits=%d",
         protocol.c_str(),
         data.c_str(),

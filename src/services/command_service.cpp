@@ -2,7 +2,7 @@
 
 #include <ArduinoJson.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 #include "config/constants.h"
 #include "config/system_config.h"
 #include "services/storage_service.h"
@@ -40,14 +40,14 @@ bool CommandService::saveCommand(
         {
 
             Logger::error(
-                "COMMAND",
+                TAG_COMMAND,
                 "Command file exceeds max size");
 
             return false;
         }
 
         Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -55,7 +55,7 @@ bool CommandService::saveCommand(
                 deserializeJson(doc, existingJson);
 
         Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
     }
@@ -79,7 +79,7 @@ bool CommandService::saveCommand(
     {
 
         Logger::warn(
-            "COMMAND",
+            TAG_COMMAND,
             "Maximum actions limit reached");
 
         return false;
@@ -106,13 +106,13 @@ bool CommandService::saveCommand(
     );
 
     Logger::debug(
-        "COMMAND",
+        TAG_COMMAND,
         "Free heap: %u",
         ESP.getFreeHeap()
     );
 
     Logger::debug(
-        "COMMAND",
+        TAG_COMMAND,
         "Writing JSON: %s",
         output.c_str()
     );
@@ -126,7 +126,7 @@ bool CommandService::saveCommand(
     if (result) {
 
         Logger::info(
-            "COMMAND",
+            TAG_COMMAND,
             "Saved command: %s -> %s",
             deviceId.c_str(),
             command.action.c_str()
@@ -161,7 +161,7 @@ bool CommandService::hasCommand(
     {
 
         Logger::error(
-            "COMMAND",
+            TAG_COMMAND,
             "Command file exceeds max size");
 
         return false;
@@ -170,7 +170,7 @@ bool CommandService::hasCommand(
     JsonDocument doc;
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -178,7 +178,7 @@ bool CommandService::hasCommand(
                 deserializeJson(doc, json);
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
 
@@ -206,7 +206,7 @@ IRCommand CommandService::getCommand(
     {
 
         Logger::error(
-            "COMMAND",
+            TAG_COMMAND,
             "Command file exceeds max size");
 
         return IRCommand();
@@ -215,7 +215,7 @@ IRCommand CommandService::getCommand(
     JsonDocument doc;
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -223,7 +223,7 @@ IRCommand CommandService::getCommand(
                 deserializeJson(doc, json);
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
 
@@ -265,7 +265,7 @@ std::vector<IRCommand> CommandService::getCommands(
     ) {
 
         Logger::error(
-            "COMMAND",
+            TAG_COMMAND,
             "Command file exceeds max size"
         );
 
@@ -275,7 +275,7 @@ std::vector<IRCommand> CommandService::getCommands(
     JsonDocument doc;
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -283,7 +283,7 @@ std::vector<IRCommand> CommandService::getCommands(
                 deserializeJson(doc, json);
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
 
@@ -329,7 +329,7 @@ bool CommandService::deleteCommands(
     if (result) {
 
         Logger::info(
-            "COMMAND",
+            TAG_COMMAND,
             "Deleted commands for device: %s",
             deviceId.c_str()
         );
@@ -349,7 +349,7 @@ bool CommandService::deleteCommand(
     if (!StorageService::exists(path)) {
 
         Logger::warn(
-            "COMMAND",
+            TAG_COMMAND,
             "Command file not found"
         );
 
@@ -368,7 +368,7 @@ bool CommandService::deleteCommand(
     {
 
         Logger::error(
-            "COMMAND",
+            TAG_COMMAND,
             "Command file exceeds max size");
 
         return false;
@@ -377,7 +377,7 @@ bool CommandService::deleteCommand(
     JsonDocument doc;
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap before deserialize: %u",
             ESP.getFreeHeap());
         
@@ -385,14 +385,14 @@ bool CommandService::deleteCommand(
                 deserializeJson(doc, json);
 
     Logger::debug(
-            "MEMORY",
+            TAG_MEMORY,
             "Heap after deserialize: %u",
             ESP.getFreeHeap());
 
     if (error) {
 
         Logger::error(
-            "COMMAND",
+            TAG_COMMAND,
             "JSON parse failed"
         );
 
@@ -405,7 +405,7 @@ bool CommandService::deleteCommand(
     if (!root[action].is<JsonObject>()) {
 
         Logger::warn(
-            "COMMAND",
+            TAG_COMMAND,
             "Action not found: %s",
             action.c_str()
         );
@@ -423,7 +423,7 @@ bool CommandService::deleteCommand(
     );
 
     Logger::debug(
-        "COMMAND",
+        TAG_COMMAND,
         "Updated JSON: %s",
         output.c_str()
     );
@@ -437,7 +437,7 @@ bool CommandService::deleteCommand(
     if (result) {
 
         Logger::info(
-            "COMMAND",
+            TAG_COMMAND,
             "Deleted action '%s' for device '%s'",
             action.c_str(),
             deviceId.c_str()

@@ -2,23 +2,24 @@
 
 #include <LittleFS.h>
 
-#include "logger.h"
+#include "utils/logger.h"
 
 bool StorageService::begin() {
 
     if (!LittleFS.begin()) {
 
         Logger::error(
-            "FS",
+            TAG_FS,
             "LittleFS mount failed"
         );
 
         return false;
     }
 
-    Logger::info("FS","LittleFS mounted");
-    
-    
+    Logger::info(
+        TAG_FS,
+        "LittleFS mounted"
+    );
 
     return true;
 }
@@ -39,7 +40,7 @@ String StorageService::readFile(
     if (!file) {
 
         Logger::warn(
-            "FS",
+            TAG_FS,
             "File not found: %s",
             path.c_str()
         );
@@ -64,7 +65,7 @@ bool StorageService::writeFile(
     if (!file) {
 
         Logger::error(
-            "FS",
+            TAG_FS,
             "Failed writing file: %s",
             path.c_str()
         );

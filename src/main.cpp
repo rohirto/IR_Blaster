@@ -12,6 +12,7 @@
 #include "services/learn_service.h"
 #include "services/ir_send_service.h"
 #include "config/system_config.h"
+#include "services/scheduler_service.h"
 #include "led_driver.h"
 
 void setup() {
@@ -56,6 +57,9 @@ void setup() {
   // Api Server setup
   ApiServer::begin();
 
+  // Scheduler Service setup
+  SchedulerService::begin();
+
 }
 
 void loop() {
@@ -64,4 +68,5 @@ void loop() {
   statusLed.update();
   IRReceiveService::loop();
   LearnService::loop();
+  SchedulerService::loop();
 }

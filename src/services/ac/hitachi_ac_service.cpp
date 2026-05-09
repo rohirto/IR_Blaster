@@ -67,9 +67,63 @@ static uint8_t mapFan(
     }
 }
 
-bool HitachiAcService::sendState(
-    const ACState& state
+static ACState normalizeState(
+    ACState state
 ) {
+
+    // =================================
+    // Normalize Temperature
+    // =================================
+
+    uint8_t originalTemp =
+        state.temperature;
+
+    state.temperature =
+        constrain(
+            state.temperature,
+            16,
+            32
+        );
+
+    if (
+        originalTemp !=
+        state.temperature
+    ) {
+
+        Logger::warn(
+            "HITACHI_AC",
+            "Normalized temperature: %d -> %d",
+            originalTemp,
+            state.temperature
+        );
+    }
+
+    // =================================
+    // Hitachi Quirk:
+    // Power OFF only works
+    // when swing is OFF
+    // =================================
+
+    if (!state.power) {
+
+        if (state.swing) {
+
+            Logger::warn(
+                "HITACHI_AC",
+                "Normalized OFF state: forcing swing OFF"
+            );
+        }
+
+        state.swing = false;
+    }
+
+    return state;
+}
+
+bool HitachiAcService::sendState(
+     ACState state
+) {
+    state = normalizeState(state);
 
     Logger::info(
         "HITACHI_AC",

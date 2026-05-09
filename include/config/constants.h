@@ -31,3 +31,6 @@
 // #define MAX_COMMAND_FILE_SIZE 8192
 
 // #define MAX_RAW_IR_TIMINGS 512
+
+
+#define SCHEDULER_FILE "/scheduler_tasks.json"

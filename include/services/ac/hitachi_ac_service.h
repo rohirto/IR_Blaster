@@ -8,6 +8,6 @@ public:
     static void begin();
 
     static bool sendState(
-        const ACState& state
+        ACState state
     );
 };

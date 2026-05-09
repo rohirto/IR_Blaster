@@ -13,6 +13,7 @@
 #include "api/config_routes.h"
 #include "api/action_routes.h"
 #include "api/ac_routes.h"
+#include "api/scheduler_routes.h"
 
 AsyncWebServer server(API_PORT);
 
@@ -37,6 +38,8 @@ void ApiServer::begin() {
     registerActionRoutes(server);
 
     registerAcRoutes(server);
+
+    registerSchedulerRoutes(server);
 
     // 404 handler
     server.onNotFound([](AsyncWebServerRequest *request) {

@@ -20,3 +20,8 @@
 #define WIFI_CONNECT_TIMEOUT 30
 
 //Dont use delay in this code
+
+//Scheduler 
+
+#define SCHEDULER_RETRY_DELAY_SEC 30
+#define SCHEDULER_MAX_RETRIES 3

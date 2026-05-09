@@ -4,6 +4,8 @@
 
 #include "utils/logger.h"
 
+#include "system/system_state.h"
+
 bool StorageService::begin() {
 
     if (!LittleFS.begin()) {
@@ -59,6 +61,16 @@ bool StorageService::writeFile(
     const String& path,
     const String& data
 ) {
+    if (
+        SystemState::isOtaInProgress())
+    {
+
+        Logger::warn(
+            "FS",
+            "Write blocked during OTA");
+
+        return false;
+    }
 
     String tempPath =
         path + ".tmp";

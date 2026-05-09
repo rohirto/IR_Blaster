@@ -7,6 +7,8 @@
 #include "services/ir_receive_service.h"
 #include "services/command_service.h"
 
+#include "system/system_state.h"
+
 LearnState LearnService::currentState =
     LEARN_IDLE;
 
@@ -37,6 +39,13 @@ void LearnService::begin() {
 // =====================================
 
 void LearnService::loop() {
+
+    if (
+        SystemState::isOtaInProgress())
+    {
+
+        return;
+    }
 
     if (currentState != LEARN_WAITING) {
 

@@ -7,6 +7,8 @@
 #include "utils/logger.h"
 #include "config/pins.h"
 
+#include "system/system_state.h"
+
 
 // =====================================
 // IR Receiver Instance
@@ -44,6 +46,16 @@ void IRReceiveService::begin() {
 // =====================================
 
 void IRReceiveService::loop() {
+    if (
+        SystemState::isOtaInProgress())
+    {
+
+        Logger::warn(
+            "FS",
+            "Write blocked during OTA");
+
+        return;
+    }
 
     if (!irrecv.decode(&results)) {
 

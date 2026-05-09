@@ -18,6 +18,8 @@
 
 #include "config/constants.h"
 
+#include "system/system_state.h"
+
 std::vector<ScheduledTask>
 SchedulerService::tasks;
 
@@ -245,6 +247,13 @@ void SchedulerService::executeTask(
 }
 
 void SchedulerService::loop() {
+
+    if (
+        SystemState::isOtaInProgress())
+    {
+
+        return;
+    }
 
     uint32_t now =
         time(nullptr);

@@ -18,7 +18,7 @@
 void setup() {
   // put your setup code here, to run once:
   Logger::begin();
-  Logger::info(TAG_BOOT, "Firmware booting");
+  Logger::info(TAG_BOOT, "Firmware booting: Boot successful");
 
   // Device Service setup
   if (!StorageService::begin()) {

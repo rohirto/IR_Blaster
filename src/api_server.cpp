@@ -2,6 +2,7 @@
 
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <ElegantOTA.h>
 
 #include "utils/logger.h"
 #include "config/system_config.h"
@@ -15,6 +16,8 @@
 #include "api/ac_routes.h"
 #include "api/scheduler_routes.h"
 
+#include "system/system_state.h"
+
 AsyncWebServer server(API_PORT);
 
 void ApiServer::begin() {
@@ -24,6 +27,9 @@ void ApiServer::begin() {
         "*"
     );
 
+    // =============================
+    // Existing Routes
+    // =============================
     // Register modular routes
     registerSystemRoutes(server);
 
@@ -51,6 +57,46 @@ void ApiServer::begin() {
         );
     });
 
+     // =============================
+    // OTA Callbacks
+    // =============================
+
+    ElegantOTA.onStart([]() {
+
+        Logger::info(
+            "OTA",
+            "OTA started"
+        );
+
+        SystemState::setOtaInProgress(
+            true
+        );
+    });
+
+    ElegantOTA.onEnd([](bool success) {
+
+        Logger::info(
+            "OTA",
+            success
+            ?
+            "OTA successful"
+            :
+            "OTA failed"
+        );
+
+        SystemState::setOtaInProgress(
+            false
+        );
+    });
+
+    // =============================
+    // Initialize OTA
+    // =============================
+    ElegantOTA.begin(&server);
+    
+    // =============================
+    // Start Server
+    // =============================
     server.begin();
 
     Logger::info(
@@ -58,3 +104,4 @@ void ApiServer::begin() {
         "API server started"
     );
 }
+

@@ -173,3 +173,26 @@ Device* DeviceService::getDeviceById(
 
     return nullptr;
 }
+
+Device* DeviceService::getDeviceByName(
+    const String& name
+) {
+
+    for (Device& device : devices) {
+
+        if (
+            device.name.equalsIgnoreCase(name)
+        ) {
+
+            return &device;
+        }
+    }
+
+    Logger::warn(
+        "DEVICE",
+        "Device not found by name: %s",
+        name.c_str()
+    );
+
+    return nullptr;
+}

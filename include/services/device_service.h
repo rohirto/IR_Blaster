@@ -23,6 +23,10 @@ public:
         const String& id
     );
 
+    static Device* getDeviceByName(
+        const String& name
+    );
+
 private:
 
     static std::vector<Device> devices;

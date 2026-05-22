@@ -18,6 +18,8 @@
 
 #include "system/system_state.h"
 
+#include "services/alexa_service.h"
+
 AsyncWebServer server(API_PORT);
 
 void ApiServer::begin() {
@@ -89,15 +91,18 @@ void ApiServer::begin() {
         );
     });
 
-    // =============================
-    // Initialize OTA
-    // =============================
-    ElegantOTA.begin(&server);
+    
     
     // =============================
     // Start Server
     // =============================
+    AlexaService::begin(server);
     server.begin();
+
+    // =============================
+    // Initialize OTA
+    // =============================
+    ElegantOTA.begin(&server);
 
     Logger::info(
         TAG_API,

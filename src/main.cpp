@@ -13,6 +13,7 @@
 #include "services/ir_send_service.h"
 #include "config/system_config.h"
 #include "services/scheduler_service.h"
+#include "services/alexa_service.h"
 #include "led_driver.h"
 
 void setup() {
@@ -60,6 +61,7 @@ void setup() {
   // Scheduler Service setup
   SchedulerService::begin();
 
+
 }
 
 void loop() {
@@ -69,4 +71,5 @@ void loop() {
   IRReceiveService::loop();
   LearnService::loop();
   SchedulerService::loop();
+  AlexaService::loop();
 }
